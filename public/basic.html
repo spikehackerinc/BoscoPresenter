@@ -108,6 +108,9 @@
         <li class="nav-item">
           <a class="nav-link" onclick="presentOpenWindow()" href="#">Present <span class="sr-only"></span></a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="presentOpenWindowBackup()" href="#">Present (Backup)<span class="sr-only"></span></a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -128,6 +131,22 @@
           <div class="row mt-3">
             <div class="col-12">
               <h1>Basic Screen Operation</h1>
+              <div id="developerSettings" style="display: none;">
+                <label>Background Color:</label>
+                <input type="color" id="bgColor" name="bgColor" value="#000000">
+                <label>Font Color:</label>
+                <input type="color" id="fontColor" name="fontColor" value="#ffffff">
+                <button type="button" class="btn btn-primary" onclick="setColors()">Set Colors</button>
+                <div class="row">
+                  <label>Font Weight:</label>
+                  <input type="range" id="fontWeight" name="fontWeight" min="100" max="900" step="100" value="400" onchange="setColors()">
+                </div>
+
+                
+                
+
+                
+              </div>
             </div>
             <div class="row">
               <h3>Options</h3>
@@ -289,7 +308,7 @@
       body: formData
     })
     .then(response => response.json())
-    .then(data => loadFileContent(data))
+    .then(data => {scrollToTop(); loadFileContent(data);})
     .catch(error => console.error(error));
   }
 
@@ -346,7 +365,26 @@
     sendToScreen(false);
   }
 
+  let loadPreviousListItem = false;
+
   function scrollUp() {
+   // console.log(currentIndex);
+    if(currentIndex == 0) {
+      if(loadPreviousListItem == false) {
+        let index = $('#lstLibraryFiles2').prop('selectedIndex');
+        index--;
+        $('#lstLibraryFiles2').prop('selectedIndex', index);
+        $('#lstLibraryFiles2').trigger('change');
+        loadPreviousListItem = true;
+      }
+      else {
+        loadPreviousListItem = false;
+        loadFileFromFolder();
+      }
+    }
+
+
+
     currentIndex--;
     loadFileContent(loadedFileContent);
     sendToScreen(false);
@@ -650,6 +688,15 @@
 
     document.addEventListener('keydown', function(event) {
             //console.log(event.keyCode);
+
+            if(event.keyCode == 33) { // Scroll Up Button
+              scrollToTop();
+            }
+
+            if(event.keyCode == 34) { // Scroll Down Button
+              scrollToBottom();
+            }
+
             if(event.keyCode == 39) {
               scrollDown();
             }
@@ -817,18 +864,22 @@
 }
 
 function presentOpenWindow() {
-  /*fetch('/presentOpenWindow', {
+  fetch('/presentOpenWindow', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     }
-  });*/
+  });
 
   // also open the present.html in a new window
+  /**/
+}
+
+function presentOpenWindowBackup() {
   window.open(
       "present.html", 
       "_blank", 
-      "toolbar=no,scrollbars=yes,resizable=yes,top=0,left=1920,width=1920,height=1080,fullscreen=yes"
+      "toolbar=no,scrollbars=yes,resizable=yes,top=0,left=2000,width=1920,height=1080,fullscreen=yes"
   );
 }
 
@@ -841,7 +892,39 @@ $(document).ready(function() {
     //console.log(folderPath);
     loadFolderFiles();
   }
+
+  setTimeout(function() {
+    // set height of livePreviewWindow to 330px
+    $("#livePreviewWindow").css("height", "330px");
+  }, 1000);
 });
+
+function setColors() {
+  // send colors to setColors
+  let bgColor = $("#bgColor").val();
+  let fontColor = $("#fontColor").val();
+  let fontWeight = $("#fontWeight").val();
+
+ // console.log(fontWeight);
+
+  let data = {
+    backgroundColor: bgColor,
+    textColor: fontColor,
+    fontWeight: fontWeight
+  };
+
+  fetch('/setColors', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+function developer() {
+  $("#developerSettings").css("display", "");
+}
 
   </script>
 

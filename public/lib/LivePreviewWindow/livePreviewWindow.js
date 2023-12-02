@@ -59,8 +59,8 @@ function initPreviewWindow(idComponent, url, title) {
 		let scaleX =
 			previewContainer.offsetWidth / scaledIframe.offsetWidth;
 		let scaleY =
-			previewContainer.offsetHeight /
-			scaledIframe.offsetHeight;
+			(previewContainer.offsetHeight /
+			scaledIframe.offsetHeight);
 
 		scaledIframe.style.transform = `scale(${scaleX}, ${scaleY})`;
 	}, 1000);

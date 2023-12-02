@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const multer  = require('multer');
-
+const os = require('os');
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -11,31 +11,52 @@ app.use(express.json());
 
 const baseUploadPath = './uploads/';
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (req, file, cb) { 
         cb(null, baseUploadPath);
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
-    }
+    } 
 });
 
 const uploader = multer({ storage: storage });
 
 
+let defaultBackgroundColor = "#000000";
+let defaultTextColor = "#ffffff";
+let defaultFontWeight = "normal";
 
+app.get('/getColors', (req, res) => {
+    res.send({
+        backgroundColor: defaultBackgroundColor,
+        textColor: defaultTextColor,
+        fontWeight: defaultFontWeight
+    });
+});
 
-
+app.post('/setColors', (req, res) => {
+    defaultBackgroundColor = req.body.backgroundColor;
+    defaultTextColor = req.body.textColor;
+    defaultFontWeight = req.body.fontWeight;
+    res.send("OK");
+});
 
 app.get('/presentOpenWindow', (req, res) => {
     const { exec } = require('child_process');
 
     const url = 'http://localhost:3000/present';
     const chromePathLinux = '/usr/bin/google-chrome';
-    const chromePathWindows = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'; // '/usr/bin/google-chrome'
-    
-    const chromePath = chromePathLinux;
+    const chromePathWindows = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+    let chromePath = null;
 
-    const command = `"${chromePath}" --new-window --kiosk "${url}"`;
+    if (process.platform === "linux") {
+        chromePath = chromePathLinux;
+    }
+    else {
+        chromePath = chromePathWindows;
+    }
+
+    const command = `"${chromePath}" --new-window --kiosk --window-position=2000,0 "${url}"`;
 
     exec(command, (err) => {
     if (err) {
@@ -313,13 +334,13 @@ function readFileLine(filePath, lineNumber) {
 async function readFileFormattedIntoSections(filePath) {
     const file = await fs.readFileSync(filePath, 'utf8');
     const lines = file.split('\r\n');
-    const sections = [];
+    let sections = [];
 
     lines.shift(); // remove first line
 
     let currentSection = [];
 
-    lines.forEach((line) => {
+    /*lines.forEach((line) => {
         if (line.trim().match(/^\d{3}$/)) {
             // if line is a section number
             if (currentSection.length) {
@@ -329,12 +350,59 @@ async function readFileFormattedIntoSections(filePath) {
         } else if (line.trim() !== '') {
             currentSection.push(line.trim());
         }
-    });
+    });*/
+
+    for(let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+
+        if (line.trim().match(/^\d{3}$/)) {
+            // if next 4 seconds are empty then add new section unless the empty section is the last in the list
+            if(lines[i + 1].trim() == "" && lines[i + 2].trim() == "" && lines[i + 3].trim() == "" && lines[i + 4].trim() == "") {
+                if(i < lines.length - 5) {
+                    sections.push(currentSection.join(' '));
+                    currentSection = [];
+                    sections.push(currentSection.join(' '));
+                }
+                    
+            }
+
+            // if line is a section number
+            if (currentSection.length) {
+                sections.push(currentSection.join(' '));
+            }
+            currentSection = [];
+        } else if (line.trim() !== '') {
+            currentSection.push(line.trim());
+        }
+    }
 
     if (currentSection.length) {
         sections.push(currentSection.join(' ')); // Join with space to remove newlines
     }
 
+    // remove lines from begging of the list that are empty or have new line
+    while(sections[0].trim() == '') {
+        sections.shift();
+    }
+
+    // remove all /n sections from the back of the list
+    while(sections[sections.length - 1].trim() == '') {
+        sections.pop();
+    }
+
+    // remove all /n sections from the middle of the list
+    let array = sections;
+    let result = [array[0]];
+
+    for (let i = 1; i < array.length; i++) {
+        if (!(array[i].trim() === '' && result[result.length - 1].trim() === '')) {
+            result.push(array[i]);
+        }
+    }
+
+    sections = result;
+
+    // add 2 empty sections to the end of the list
     sections.push('');
     sections.push('');
 

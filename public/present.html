@@ -59,7 +59,19 @@
 
         setInterval(() => {
             getServerSlide();
+            getColors();
         }, 100);
+
+        async function getColors() {
+            // getSectionServer
+            let response = await fetch('/getColors');
+            content = await response.text();
+
+            content = JSON.parse(content);
+            document.body.style.backgroundColor = content.backgroundColor;
+            document.body.style.color = content.textColor;
+            document.body.style.fontWeight = content.fontWeight ;
+        }
 
 
         async function displaySong() {
