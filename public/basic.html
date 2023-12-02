@@ -1,0 +1,802 @@
+<!-- FILEPATH: /home/spike/Desktop/BoscoPresenter/public/setup.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hymn Presenter</title>
+
+  <!-- Live Preview Library -->
+  <link rel="stylesheet" type="text/css" href="lib/LivePreviewWindow/livePreviewWindow.css">
+  <script src="lib/LivePreviewWindow/livePreviewWindow.js"></script>
+
+  <!-- Import bootstrap from /lib/bootstrap-5.3.2/dist/js -->
+  <script src="lib/bootstrap-5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="lib/bootstrap-5.3.2/dist/css/bootstrap.min.css">
+  <link href="lib/icons-1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+
+  <!-- Import jquery from lib/jquery-ui-1.13.2 -->
+  <script src="lib/jquery-3.7.1.min.js"></script>
+
+
+  <link href="lib/select2-4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="lib/select2-4.0.13/dist/js/select2.full.min.js"></script>
+  
+
+  <style>
+      .preview-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+  }
+
+  .nav-item.active {
+    background-color: #343a40;
+  }
+
+   .border-bottom {
+      border-bottom: var(--bs-border-width) var(--bs-border-style) #2f323a!important;
+   }
+
+   .navbar {
+        padding-left: 20px;
+      }
+
+      .select2dd {
+        width: 90%;
+      } 
+
+      .select2-search { background-color: rgb(56, 56, 56); }
+      .select2-search input { background-color: rgb(56, 56, 56); }
+      .select2-results { background-color: rgb(56, 56, 56); }
+      .select2-container--default .select2-results__option--selected { background-color: rgb(114, 114, 114); }
+      .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+          background-color: #b1b3b6;
+          color: white;
+      }
+
+        .lstServices .select2-selection__rendered {
+          line-height: 31px !important;
+        }
+        .lstServices .select2-container .select2-selection--single {
+            height: 38px !important;
+        }
+        .lstServices .select2-selection__arrow {
+            height: 34px !important;
+        }
+
+      
+
+
+      .select-container {
+        display: flex;
+        align-items: center;
+      }
+      .select-label {
+        margin-right: 10px;
+      }
+
+      .green-dotted-border {
+        border: 5px dotted green;
+      }
+  </style>
+
+  
+</head>
+<body class="bg-dark text-white">
+
+
+    
+  <!-- Simple Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom container-fluid">
+    <a class="navbar-brand" href="#">Hymn Presenter</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="./setup">Home</a>
+        </li> -->
+        <li class="nav-item active">
+          <a class="nav-link" href="./basic">Basic <span class="sr-only"></span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" target="_blank" href="./present">Present <span class="sr-only"></span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-6">
+
+
+
+
+
+
+        <div class="container">
+        
+        
+          <div class="row mt-3">
+            <div class="col-12">
+              <h1>Basic Screen Operation</h1>
+            </div>
+            <div class="row">
+              <h3>Options</h3>
+              <div>
+                <button id="btnLoadFile" type="button" class="btn btn-primary" onclick="openFileDialog()">Load Single File</button>
+
+                
+              </div>
+
+              
+            </div>
+
+
+
+            <div class="row mt-2">
+              <h3>Folder Songs</h3>
+              <div class="input-group">
+                <div class="select-container">
+                  <div class="row">
+                    <label for="lstLibraryFiles" class="select-label">Folder Path:</label>
+                    <div>
+                      <input id="txtFolderPath" style="width: 80%" value="/home/spike/Downloads/_Joe & Jody (1)"/>
+                      <button class="btn btn-outline-secondary" type="button" title="Load Folder" onclick="loadFolderFiles()" ><i class="bi bi-folder"></i></button>             
+                    </div>
+
+                    <label for="lstLibraryFiles" class="select-label">Files in Folder:</label>
+                    <div>
+                      <select id="lstLibraryFiles2" style="width: 80%"></select>
+                      <button class="btn btn-outline-secondary" type="button" title="Load Song" onclick="loadFileFromFolder()"><i class="bi bi-box-arrow-in-down"></i></button>        
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row mt-2" style="display: none;">
+              <h3>Library Songs</h3>
+              <div class="input-group">
+                <div class="select-container">
+                  <div class="col-12">
+                    <label for="lstLibraryFiles" class="select-label">Library File</label>
+                    <select id="lstLibraryFiles" style="width: 800px"></select>
+                    <button class="btn btn-outline-secondary" type="button" title="Load Song" onclick="loadLibraryFile()"><i class="bi bi-box-arrow-in-down"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <div class="row mt-2">
+              <h3>Content</h3>
+              <div id="previewContent">
+                <div class="form-floating">
+                  <textarea class="form-control mb-2 green-dotted-border" placeholder="" id="taI0" style="height: 100px"></textarea>
+                  <label id="lbltai0" for="taI0" style="color: red">1</label>
+                </div>
+                <div class="form-floating">
+                  <textarea class="form-control mb-2" placeholder="" id="taI1" style="height: 100px"></textarea>
+                  <label id="lbltai1" for="taI1" style="color: red">2</label>
+                </div>
+                <div class="form-floating">
+                  <textarea class="form-control mb-2" placeholder="" id="taI2" style="height: 100px"></textarea>
+                  <label id="lbltai2" for="taI2" style="color: red">3</label>
+                </div>
+              </div>
+              
+              <div>
+                <div style="float: left;">
+                  <button type="button" class="btn btn-primary" onclick="scrollToTop()">Scroll to Top</button>
+                  <button type="button" class="btn btn-primary" onclick="scrollToBottom()">Scroll to Bottom</button>
+                  <button type="button" class="btn btn-primary" onclick="scrollUp()">Scroll Up</button>
+                  <button type="button" class="btn btn-primary" onclick="scrollDown()">Scroll Down</button>
+                  
+                </div>
+                
+                
+
+                <div style="float: right;">
+                  <button id="btnClear" type="button" class="btn btn-warning" onclick="clearContent()" style="display: none;">Clear</button>
+                  <button id="btnSendToScreen" type="button" class="btn btn-success" onclick="initSendToScreen()">Send to Screen</button>
+                  <button id="btnStopSend" style="display: none;" type="button" class="btn btn-danger" onclick="stopSend()">Stop Sending</button>
+                </div>
+                
+
+                <button id="btnNextSlide" type="button" class="btn btn-primary" onclick="nextSlide()" style="display: none;" disabled>Next Slide</button>
+                <button id="btnPrevSlide" type="button" class="btn btn-primary" onclick="prevSlide()" style="display: none;" disabled>Previous Slide</button>
+              </div>
+
+
+            </div>
+
+          
+          </div>
+        
+       
+        
+        
+        
+        </div>
+
+
+
+
+
+
+
+      </div>
+    </div>
+  
+
+  </div>
+
+
+
+
+
+
+
+  <script>
+  let lastSelectedFile;
+  let loadedFileContent;
+  let currentIndex = 0;
+  let currentIndexDisplaying = 0;
+
+  function openFileDialog() {
+    const inputElement = document.createElement('input');
+    inputElement.type = 'file';
+    inputElement.onchange = (e) => {
+      // Get the list of selected files
+      const files = e.target.files;
+      if (files.length > 0) {
+        // Remember the last selected file
+        lastSelectedFile = files[0];
+        // Log the name of the file, since we can't get the full path
+       // console.log('Selected file:', lastSelectedFile.name);
+        uploadFile(lastSelectedFile);
+      }
+    };
+
+    // If the last file was selected, set the value to that directory
+    if (lastSelectedFile) {
+      inputElement.value = lastSelectedFile.webkitRelativePath;
+    }
+
+    // Simulate a click on the input element to open the file dialog
+    inputElement.click();
+  }
+
+  function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    firstLoadContent = true;
+
+    fetch('/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => loadFileContent(data))
+    .catch(error => console.error(error));
+  }
+
+  let firstLoadContent = false;
+
+
+  function loadFileContent(content) {
+
+
+    loadedFileContent = content;
+
+    if(firstLoadContent)
+    {
+      loadedFileContent.push("");
+    loadedFileContent.push("");
+    
+    }
+
+    firstLoadContent = false;
+
+    if(currentIndex < 0) currentIndex = 0;
+    if(currentIndex > loadedFileContent.length-3) currentIndex = loadedFileContent.length-3;
+
+
+    $("#taI0").val(loadedFileContent[currentIndex]);
+    $("#taI1").val(loadedFileContent[currentIndex+1]);
+    $("#taI2").val(loadedFileContent[currentIndex+2]);
+
+    $("#lbltai0").text(currentIndex+1);
+    $("#lbltai1").text(currentIndex+2);
+    $("#lbltai2").text(currentIndex+3);
+  }
+
+  let loadedNextListItem = false;
+
+  function scrollDown() {
+    if(currentIndex == loadedFileContent.length-3) {
+      if(loadedNextListItem == false) {
+        let index = $('#lstLibraryFiles2').prop('selectedIndex');
+        index++;
+        $('#lstLibraryFiles2').prop('selectedIndex', index);
+        $('#lstLibraryFiles2').trigger('change');
+        loadedNextListItem = true;
+      }
+      else {
+        loadedNextListItem = false;
+        loadFileFromFolder();
+      }
+    }
+      
+
+    currentIndex++;
+    loadFileContent(loadedFileContent);
+    sendToScreen(false);
+  }
+
+  function scrollUp() {
+    currentIndex--;
+    loadFileContent(loadedFileContent);
+    sendToScreen(false);
+  }
+
+  let sendingToScreen = false;
+
+  function initSendToScreen() {        
+    // unhide btnClear
+    $("#btnClear").css("display", "");
+
+    wasSendingToScreen = false;
+    sendToScreen(true);
+  }
+
+  function stopSend() {
+      // hide btnClear
+      $("#btnClear").css("display", "none");
+
+      $("#taI0").prop('disabled', false);
+      $("#taI1").prop('disabled', false);
+      $("#taI2").prop('disabled', false);
+      $("#taI1").css("background-color", "white");
+
+      $("#btnLoadFile").prop('disabled', false);
+
+      $("#btnStopSend").css("display", "none");
+      $("#btnSendToScreen").css("display", "");
+
+      sendingToScreen = false;
+
+      // remove first and last 2 elements
+      loadedFileContent.shift();
+     // loadedFileContent.pop();
+     // loadedFileContent.pop();
+
+      // add taI0 green-dotted-border class
+      $("#taI0").addClass("green-dotted-border");
+
+
+      loadFileContent(loadedFileContent);
+  }
+
+  function onTextAreaChange(e) {
+    // update the loadedFileContent based on change
+    if(e.target.id == "taI0") {
+      loadedFileContent[currentIndex] = $("#taI0").val();
+    } else if(e.target.id == "taI1") {
+      loadedFileContent[currentIndex+1] = $("#taI1").val();
+    } else if(e.target.id == "taI2") {
+      loadedFileContent[currentIndex+2] = $("#taI2").val();
+    }
+
+    loadFileContent(loadedFileContent);
+  }
+
+  function sendToScreen(firstSend) {
+
+
+    if(firstSend) {
+      $("#taI0").prop('disabled', true);
+      $("#taI1").prop('disabled', true);
+      $("#taI2").prop('disabled', true);
+      $("#btnLoadFile").prop('disabled', true);
+      $("#btnStopSend").css("display", "");
+      $("#btnSendToScreen").css("display", "none");
+      $("#taI0").removeClass("green-dotted-border");
+
+
+      loadedFileContent.unshift("");    
+      //loadedFileContent.push("");
+     // loadedFileContent.push("");
+
+      loadFileContent(loadedFileContent);
+
+      $("#taI1").css("background-color", "green");
+
+      content = $("#taI1").val();
+
+      let data = {
+        content: content
+      };
+
+      fetch('/setBasicSendingContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      })
+
+      sendingToScreen = true;
+    }
+    else {
+      if(sendingToScreen) {
+        content = $("#taI1").val();
+
+        let data = {
+          content: content
+        };
+
+        fetch('/setBasicSendingContent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data),
+        });
+
+        return;
+      }
+    }
+
+
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+/*
+
+    if($("#btnSendToScreen").text() == "Stop Sending") {
+      // Stop sending
+      $("#btnSendToScreen").text("Send to Screen");
+      $("#taI0").prop('disabled', false);
+    $("#taI1").prop('disabled', false);
+    $("#taI2").prop('disabled', false);
+      return;
+    }
+
+    $("#btnNextSlide").css("display", "");
+    $("#btnPrevSlide").css("display", "");
+
+    // remove disabled
+    $("#btnNextSlide").prop('disabled', false);
+    $("#btnPrevSlide").prop('disabled', false);
+
+    // Disable all textareas
+    $("#taI0").prop('disabled', true);
+    $("#taI1").prop('disabled', true);
+    $("#taI2").prop('disabled', true);
+
+    // Send to screen
+    // call post service setBasicSendingContent to send content to screen
+    let content = "";
+
+    if(currentIndexDisplaying == 0) {
+      content = $("#taI0").val();
+    } else if(currentIndexDisplaying == 1) {
+      content = $("#taI1").val();
+    } else if(currentIndexDisplaying == 2) {
+      content = $("#taI2").val();
+    }
+
+    // set textarea background color based on currentIndexDisplaying
+
+    if(currentIndexDisplaying == 0) {
+      $("#taI0").css("background-color", "green");
+      $("#taI1").css("background-color", "white");
+      $("#taI2").css("background-color", "white");
+    } else if(currentIndexDisplaying == 1) {
+      $("#taI0").css("background-color", "white");
+      $("#taI1").css("background-color", "green");
+      $("#taI2").css("background-color", "white");
+    } else if(currentIndexDisplaying == 2) {
+      $("#taI0").css("background-color", "white");
+      $("#taI1").css("background-color", "white");
+      $("#taI2").css("background-color", "green");
+    }
+
+    let data = {
+      content: content
+    };
+
+    fetch('/setBasicSendingContent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    
+
+
+    // change send to screen to "Stop Sending"
+    $("#btnSendToScreen").text("Stop Sending");
+
+  */
+
+  }
+
+  function nextSlide() {
+    //console.log("next slide");
+    //console.log(currentIndexDisplaying);
+
+    currentIndexDisplaying++;
+
+    if(currentIndexDisplaying == 0) {
+      $("#taI0").css("background-color", "green");
+      $("#taI1").css("background-color", "white");
+      $("#taI2").css("background-color", "white");
+    } else if(currentIndexDisplaying == 1) {
+      $("#taI0").css("background-color", "white");
+      $("#taI1").css("background-color", "green");
+      $("#taI2").css("background-color", "white");
+    } else if(currentIndexDisplaying == 2) {
+      $("#taI0").css("background-color", "white");
+      $("#taI1").css("background-color", "white");
+      $("#taI2").css("background-color", "green");
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+      initPreviewWindow('livePreviewWindow', 'http://localhost:3000/present.html', 'Live Preview');
+
+     // $('#lstServices').select2();
+      $('#mySelect2').select2();
+
+      $('#lstLibraryFiles').select2();
+      //refreshLibraryFilesList();
+
+      $('#lstLibraryFiles2').select2();
+      
+    });
+
+    function refreshLibraryFilesList() {
+      // getFilesAndPreviews
+      fetch('/getFilesAndPreviews', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        //console.log(data);
+        // update the list
+        $('#lstLibraryFiles').empty();
+        data.forEach(element => {
+          $('#lstLibraryFiles').append($('<option>', {
+            value: element,
+            text: element
+          }));
+        });
+      })
+      .catch(error => console.error(error));
+
+    }
+
+    function loadLibraryFile() {
+      const selection = $('#lstLibraryFiles').val();
+
+      // post to loadFileFromPreviewName
+      let data = {
+        previewName: selection
+      };
+
+      fetch('/loadFileFromPreviewName', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+        //console.log(data);
+        loadFileContent(data);
+      })
+      .catch(error => console.error(error));
+
+    }
+
+
+
+    // on ready
+    
+
+
+
+
+    document.addEventListener('keydown', function(event) {
+            //console.log(event.keyCode);
+            if(event.keyCode == 39) {
+              scrollDown();
+            }
+
+            if(event.keyCode == 37) {
+                scrollUp();
+            }
+
+            // add onTextAreaChange to all text areas
+            $("#taI0").on("change keyup paste", onTextAreaChange);
+            $("#taI1").on("change keyup paste", onTextAreaChange);
+            $("#taI2").on("change keyup paste", onTextAreaChange);
+
+
+
+
+        });
+
+
+  async function scrollToTop() {
+    currentIndex = 0;
+    loadFileContent(loadedFileContent);
+    sendToScreen(false);
+  }
+
+  async function scrollToBottom() {
+    currentIndex = loadedFileContent.length-3;
+    loadFileContent(loadedFileContent);
+    sendToScreen(false);
+  }
+
+  async function loadFolderFiles() {
+    let folderPath = $("#txtFolderPath").val();
+
+    if(folderPath == "") {
+      alert("Please type a folder path in the textbox before trying again");
+      return;
+    }
+
+    // post to loadFilesInFolder
+    let data = {
+      folderPath: folderPath
+    };
+
+    fetch('/loadFilesInFolder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+      //console.log(data);
+      // update the list
+      data.sort(naturalSort);
+
+      $('#lstLibraryFiles2').empty();
+      data.forEach(element => {
+        $('#lstLibraryFiles2').append($('<option>', {
+          value: element,
+          text: element
+        }));
+      });
+    })
+    .catch(error => console.error(error));
+    
+  }
+
+  let wasSendingToScreen = false;
+
+  function loadFileFromFolder() {
+    if(sendingToScreen == true) {
+      wasSendingToScreen = true;
+      stopSend();
+    }
+
+
+    const selection = $('#lstLibraryFiles2').val();
+    const folderPath = $("#txtFolderPath").val();
+
+    // post to loadFileFromPreviewName
+    let data = {
+      previewName: selection,
+      folderPath: folderPath
+    };
+
+    fetch('/loadFileFromPreviewName', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+     // console.log(data);
+      loadFileContent(data);
+
+      scrollToTop();
+
+      if(wasSendingToScreen) {
+        //console.log("was sending to screen");
+        setTimeout(function() { initSendToScreen(); }, 100);
+      }
+    })
+    .catch(error => console.error(error));
+  }
+
+  function clearContent() {
+    stopSend();
+    let data = {
+        content: ""
+      };
+
+    fetch('/setBasicSendingContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      });
+
+  }
+
+  function naturalSort(a, b) {
+    let ax = [], bx = [];
+
+    a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) {
+        ax.push([$1 || Infinity, $2 || ""]);
+    });
+    b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) {
+        bx.push([$1 || Infinity, $2 || ""]);
+    });
+    
+    while(ax.length && bx.length) {
+        let an = ax.shift();
+        let bn = bx.shift();
+        let nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+        if(nn) return nn;
+    }
+
+    return ax.length - bx.length;
+}
+
+  </script>
+
+
+</body>
+</html>

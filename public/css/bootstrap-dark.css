@@ -1,0 +1,32 @@
+.dark-modal-content {
+    background-color: #343a40; /* Dark background */
+    color: white; /* Light text */
+}
+
+.dark-modal-header, .dark-modal-body, .dark-modal-footer {
+    border-color: #454d55; /* Slightly lighter border for some contrast */
+}
+
+/* Optionally, style the form inputs for a darker theme as well */
+.dark-modal-content .form-control {
+    background-color: #484e53;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.dark-modal-content .form-control:focus {
+    background-color: #484e53;
+    border-color: #5a6268;
+    box-shadow: none; /* Optional: Removes the default Bootstrap glow effect */
+}
+
+/* Adjusting the colors for the modal title */
+.dark-modal-header .modal-title {
+    color: white;
+}
+
+/* Adjusting button styles if needed */
+.dark-modal-footer .btn-primary {
+    background-color: #007bff; /* Bootstrap primary color */
+    border-color: #007bff;
+}

@@ -1,0 +1,168 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+   html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Ensure the body takes the full viewport height */
+    width: 100%; /* Ensure the body takes the full viewport width */
+    background-color: #000000;
+    color: #e6e6e6;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .full-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers vertically in the flex container */
+    height: 100vh;
+    width: 100%;
+    text-align: center;
+    font-size: calc(5vw + 5vh); /* Adjust the size of the font based on the viewport size */
+  }
+  
+  .full-screen > div {
+    overflow: hidden; /* Optional based on design: Hide overflow */
+    white-space: normal; /* Allow text wrapping */
+    line-height: 1.2; /* Adjust line height for better readability */
+    /* Remove text-overflow: ellipsis and white-space: nowrap if you want to utilize space with wrapped text */
+  }
+
+</style>
+</head>
+<body>
+    <div class="full-screen" id="txtContents"></div>
+
+
+    <script>
+        let currentSlide = 0;
+        let content;
+
+       // on ready
+        document.addEventListener("DOMContentLoaded", function(event) {
+            window.addEventListener('resize', function() {
+                adjustFontSizeToFit('txtContents');  // Adjust the font size when the window is resized
+            });
+        });
+
+
+        async function getServerSlide() {
+            // getSectionServer
+            let response = await fetch('/getSectionServer');
+            content = await response.text();
+
+            document.getElementById("txtContents").innerHTML = content;
+            adjustFontSizeToFit('txtContents');
+        }
+
+        setInterval(() => {
+            getServerSlide();
+        }, 100);
+
+
+        async function displaySong() {
+            // sevice endpoint testSongContents
+            
+
+            
+            // call/fetch service to get content syncronously from endpoint /testSongContents
+            let response = await fetch('/testSongContents');
+            content = await response.text();
+            content = JSON.parse(content);
+            console.log('GET response text:');
+            console.log(content); // Print the greeting as text
+
+
+            document.getElementById("txtContents").innerHTML = content[currentSlide];
+            adjustFontSizeToFit('txtContents');
+            
+
+
+        }
+
+        function adjustFontSizeToFit(elementId) {
+            const element = document.getElementById(elementId);
+            const parent = element.parentNode;
+            element.style.fontSize = '400px';
+            let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
+
+      
+           
+            
+
+          
+
+            // Increase font size if there is extra space
+            while ( element.scrollHeight < parent.offsetHeight && element.scrollWidth < parent.offsetWidth) {
+              
+                fontSize += 1; // Increase the font size by 1px
+                element.style.fontSize = `${fontSize}px`;
+
+                // Check if increasing the font size causes overflow
+                if (element.scrollHeight > parent.offsetHeight || element.scrollWidth > parent.offsetWidth) {
+                fontSize -= 1; // Revert the font size increase
+                element.style.fontSize = `${fontSize}px`;
+                  break;
+                }
+
+                // Set maximum font size limit
+                if (fontSize >= 100) { // Adjust this value based on your needs
+                 break;
+                }
+            }
+
+            // Reduce font size if there is an overflow
+            while (element.scrollHeight > parent.offsetHeight || element.scrollWidth > parent.offsetWidth) {
+           
+                fontSize -= 1; // Decrease the font size by 1px
+                element.style.fontSize = `${fontSize}px`;
+
+                // Set minimum font size limit
+                if (fontSize <= 10) { // Adjust this value based on your needs
+                     break;
+                }
+            }
+        }
+
+
+        
+
+        function nextSlide() {
+            currentSlide++;
+            /*document.getElementById("txtContents").style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById("txtContents").innerHTML = content[currentSlide];
+                adjustFontSizeToFit('txtContents');
+                document.getElementById("txtContents").style.opacity = 1;
+            }, 100);*/
+
+            document.getElementById("txtContents").innerHTML = content[currentSlide];
+            adjustFontSizeToFit('txtContents');
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            document.getElementById("txtContents").innerHTML = content[currentSlide];
+            adjustFontSizeToFit('txtContents');
+        }
+
+        // add right arrow to goto nextSlide()
+        document.addEventListener('keydown', function(event) {
+            console.log(event.keyCode);
+            if(event.keyCode == 39) {
+                nextSlide();
+            }
+
+            if(event.keyCode == 37) {
+                prevSlide();
+            }
+        });
+
+
+
+        //isplaySong();
+    </script>
+  </body>
+</html>
