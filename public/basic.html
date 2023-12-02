@@ -106,7 +106,7 @@
           <a class="nav-link" href="./basic">Basic <span class="sr-only"></span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" target="_blank" href="./present">Present <span class="sr-only"></span></a>
+          <a class="nav-link" onclick="presentOpenWindow()" href="#">Present <span class="sr-only"></span></a>
         </li>
       </ul>
     </div>
@@ -681,6 +681,25 @@
     sendToScreen(false);
   }
 
+  function saveCookie(folderPath) {
+    var farFutureDate = new Date();
+    farFutureDate.setFullYear(farFutureDate.getFullYear() + 100); // 100 years in the future
+
+    document.cookie = "boscoPresenter_folderPath=" + folderPath + "; expires=" + farFutureDate.toUTCString() + "; path=/";
+
+  }
+
+  function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+  }
+
   async function loadFolderFiles() {
     let folderPath = $("#txtFolderPath").val();
 
@@ -688,6 +707,8 @@
       alert("Please type a folder path in the textbox before trying again");
       return;
     }
+
+    saveCookie(folderPath);
 
     // post to loadFilesInFolder
     let data = {
@@ -794,6 +815,33 @@
 
     return ax.length - bx.length;
 }
+
+function presentOpenWindow() {
+  /*fetch('/presentOpenWindow', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });*/
+
+  // also open the present.html in a new window
+  window.open(
+      "present.html", 
+      "_blank", 
+      "toolbar=no,scrollbars=yes,resizable=yes,top=0,left=1920,width=1920,height=1080,fullscreen=yes"
+  );
+}
+
+// on ready
+$(document).ready(function() {
+  // get the cookie
+  let folderPath = getCookie("boscoPresenter_folderPath");
+  if(folderPath != null) {
+    $("#txtFolderPath").val(folderPath);
+    //console.log(folderPath);
+    loadFolderFiles();
+  }
+});
 
   </script>
 

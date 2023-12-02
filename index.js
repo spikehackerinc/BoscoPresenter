@@ -25,7 +25,23 @@ const uploader = multer({ storage: storage });
 
 
 
+app.get('/presentOpenWindow', (req, res) => {
+    const { exec } = require('child_process');
 
+    const url = 'http://localhost:3000/present';
+    const chromePathLinux = '/usr/bin/google-chrome';
+    const chromePathWindows = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'; // '/usr/bin/google-chrome'
+    
+    const chromePath = chromePathLinux;
+
+    const command = `"${chromePath}" --new-window --kiosk "${url}"`;
+
+    exec(command, (err) => {
+    if (err) {
+        console.error('Failed to open Chrome:', err);
+    }
+    });
+});
 
 
 /*
