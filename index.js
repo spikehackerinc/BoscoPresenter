@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const multer  = require('multer');
 
 const express = require('express');
@@ -340,8 +341,18 @@ async function readFileFormattedIntoSections(filePath) {
     return sections;
 }
 
+function readFilesFromFolder(folder) {
+    const items = fs.readdirSync(folder);
+    const files = items.filter(item => {
+        const itemPath = path.join(folder, item);
+        return fs.statSync(itemPath).isFile();
+    });
+    return files;
+}
+
 function getFileNamesInFolder(folder) {
-    var files = fs.readdirSync(folder);
+    //var files = fs.readdirSync(folder);
+    var files = readFilesFromFolder(folder);
     return files;
 }
 
