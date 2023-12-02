@@ -357,14 +357,22 @@ async function readFileFormattedIntoSections(filePath) {
 
         if (line.trim().match(/^\d{3}$/)) {
             // if next 4 seconds are empty then add new section unless the empty section is the last in the list
-            if(lines[i + 1].trim() == "" && lines[i + 2].trim() == "" && lines[i + 3].trim() == "" && lines[i + 4].trim() == "") {
-                if(i < lines.length - 5) {
-                    sections.push(currentSection.join(' '));
-                    currentSection = [];
-                    sections.push(currentSection.join(' '));
+            try {
+                if(lines[i + 1].trim() == "" && lines[i + 2].trim() == "" && lines[i + 3].trim() == "" && lines[i + 4].trim() == "") {
+                    if(i < lines.length - 5) {
+                        sections.push(currentSection.join(' '));
+                        currentSection = [];
+                        sections.push(currentSection.join(' '));
+                    }
+                        
                 }
-                    
             }
+            catch (error) {
+                // Handle the error or simply continue
+                console.error("An error occurred, moving on:", error);
+                // Optionally, you can add logic here to handle specific errors
+            }
+            
 
             // if line is a section number
             if (currentSection.length) {
