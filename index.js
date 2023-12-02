@@ -369,7 +369,7 @@ async function readFileFormattedIntoSections(filePath) {
             }
             catch (error) {
                 // Handle the error or simply continue
-                console.error("An error occurred, moving on:", error);
+               // console.error("An error occurred, moving on:", error);
                 // Optionally, you can add logic here to handle specific errors
             }
             
