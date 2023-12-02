@@ -152,7 +152,8 @@
               <h3>Options</h3>
               <div>
                 <button id="btnLoadFile" type="button" class="btn btn-primary" onclick="openFileDialog()">Load Single File</button>
-
+                <button id="btnSendToScreen2" type="button" class="btn btn-success" onclick="initSendToScreen()">Send to Screen</button>
+                <button id="btnStopSend2" style="display: none;" type="button" class="btn btn-danger" onclick="stopSend()">Stop Sending</button>
                 
               </div>
 
@@ -413,6 +414,8 @@
 
       $("#btnStopSend").css("display", "none");
       $("#btnSendToScreen").css("display", "");
+      $("#btnStopSend2").css("display", "none");
+      $("#btnSendToScreen2").css("display", "");
 
       sendingToScreen = false;
 
@@ -451,6 +454,8 @@
       $("#btnLoadFile").prop('disabled', true);
       $("#btnStopSend").css("display", "");
       $("#btnSendToScreen").css("display", "none");
+      $("#btnStopSend2").css("display", "");
+      $("#btnSendToScreen2").css("display", "none");
       $("#taI0").removeClass("green-dotted-border");
 
 
