@@ -24,7 +24,7 @@
   <link href="lib/select2-4.0.13/dist/css/select2.min.css" rel="stylesheet" />
   <script src="lib/select2-4.0.13/dist/js/select2.full.min.js"></script>
   
-
+  <link rel="stylesheet" href="css/bootstrap-dark.css"> 
   <style>
       .preview-button {
     position: fixed;
@@ -87,8 +87,7 @@
   
 </head>
 <body class="bg-dark text-white">
-
-
+ 
     
   <!-- Simple Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom container-fluid">
@@ -105,11 +104,14 @@
         <li class="nav-item active">
           <a class="nav-link" href="./basic">Basic <span class="sr-only"></span></a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" onclick="presentOpenWindow()" href="#">Present <span class="sr-only"></span></a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" onclick="presentOpenWindowBackup()" href="#">Present<span class="sr-only"></span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" onclick="presentOpenWindowBackup()" href="#">Present (Backup)<span class="sr-only"></span></a>
+          <a class="nav-link" onclick="openChangelog()" href="#">Changelog<span class="sr-only"></span></a>
         </li>
       </ul>
     </div>
@@ -258,15 +260,37 @@
 
 
       </div>
+
+
+      
+
     </div>
   
+    
 
   </div>
 
 
-
-
-
+<div class="modal fade" id="modalChangelog" tabindex="-1" role="modal" aria-labelledby="modalChangelog" aria-hidden="true" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalChangelog">Changelog</h5>
+      </div>
+      <div class="modal-body">
+        <h5>2023-12-12</h5>
+        <ul>
+          <li>Added preview of next song during scroll cycling</li>
+          <li>Added changelog window to see changes made every week</li>          
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeChangelogModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
 
 
   <script>
@@ -315,24 +339,18 @@
 
   let firstLoadContent = false;
 
-
   function loadFileContent(content) {
-
-
     loadedFileContent = content;
 
-    if(firstLoadContent)
-    {
+    if(firstLoadContent) {
       loadedFileContent.push("");
-    loadedFileContent.push("");
-    
+      loadedFileContent.push("");
     }
 
     firstLoadContent = false;
 
     if(currentIndex < 0) currentIndex = 0;
     if(currentIndex > loadedFileContent.length-3) currentIndex = loadedFileContent.length-3;
-
 
     $("#taI0").val(loadedFileContent[currentIndex]);
     $("#taI1").val(loadedFileContent[currentIndex+1]);
@@ -345,6 +363,30 @@
 
   let loadedNextListItem = false;
 
+  function preloadPreview() {
+    const selection = $('#lstLibraryFiles2').val();
+    const folderPath = $("#txtFolderPath").val();
+
+    let data = {
+      previewName: selection,
+      folderPath: folderPath
+    };
+    
+    fetch('/loadFileFromPreviewName', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+      let previewContent = data;
+
+      $("#taI2").val(previewContent[0]);
+    }).catch(error => console.error(error));
+  }
+
   function scrollDown() {
     if(currentIndex == loadedFileContent.length-3) {
       if(loadedNextListItem == false) {
@@ -353,6 +395,9 @@
         $('#lstLibraryFiles2').prop('selectedIndex', index);
         $('#lstLibraryFiles2').trigger('change');
         loadedNextListItem = true;
+
+        // Show First Section as Preview        
+        preloadPreview();
       }
       else {
         loadedNextListItem = false;
@@ -929,6 +974,14 @@ function setColors() {
 
 function developer() {
   $("#developerSettings").css("display", "");
+}
+
+function openChangelog() {
+  $("#modalChangelog").modal("show");
+}
+
+function closeChangelogModal() {
+  $("#modalChangelog").modal("hide");
 }
 
   </script>
