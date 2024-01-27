@@ -97,20 +97,22 @@
         function adjustFontSizeToFit(elementId) {
             const element = document.getElementById(elementId);
             const parent = element.parentNode;
-            element.style.fontSize = '400px';
+            element.style.fontSize = '250px';
             let fontSize = parseFloat(window.getComputedStyle(element).fontSize);
 
       
            
             
 
-          
+
 
             // Increase font size if there is extra space
             while ( element.scrollHeight < parent.offsetHeight && element.scrollWidth < parent.offsetWidth) {
               
                 fontSize += 1; // Increase the font size by 1px
                 element.style.fontSize = `${fontSize}px`;
+
+                // console.log(fontSize);
 
                 // Check if increasing the font size causes overflow
                 if (element.scrollHeight > parent.offsetHeight || element.scrollWidth > parent.offsetWidth) {
@@ -120,14 +122,15 @@
                 }
 
                 // Set maximum font size limit
-                if (fontSize >= 100) { // Adjust this value based on your needs
+                if (fontSize >= 250) { // Adjust this value based on your needs
+                    //console.log(fontSize);
                  break;
                 }
             }
 
             // Reduce font size if there is an overflow
             while (element.scrollHeight > parent.offsetHeight || element.scrollWidth > parent.offsetWidth) {
-           
+                //console.log(fontSize);
                 fontSize -= 1; // Decrease the font size by 1px
                 element.style.fontSize = `${fontSize}px`;
 
